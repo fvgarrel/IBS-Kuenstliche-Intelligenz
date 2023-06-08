@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/.idea/IBS-Kuenstliche-Intelligenz.iml" filepath="$PROJECT_DIR$/.idea/IBS-Kuenstliche-Intelligenz.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../gym-minesweeper/.idea/gym-minesweeper.iml" filepath="$PROJECT_DIR$/../gym-minesweeper/.idea/gym-minesweeper.iml" />
     </modules>
   </component>
 </project>
