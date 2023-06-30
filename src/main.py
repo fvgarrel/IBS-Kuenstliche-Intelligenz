@@ -47,9 +47,10 @@ class EnvEvalCallback(BaseCallback):
         )
 
         #plots the amount of reveals a single action did compared to the prvious board state
+        #TODO passt nicht
         if self._previous_env is not None:
             self.tb_formatter.writer.add_scalar(
-                "reveals/delta",
+                "reveals/revealsPerAction",
                 len(self._previous_env[self._previous_env >= 0]) - len(board[(board >= 0)]),
                 self.num_timesteps
             )
