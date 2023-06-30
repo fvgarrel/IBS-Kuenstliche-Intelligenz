@@ -5,7 +5,6 @@ from stable_baselines3.ppo.policies import MlpPolicy
 from stable_baselines3.common.callbacks import BaseCallback
 from stable_baselines3.common.logger import TensorBoardOutputFormat
 
-
 class EnvEvalCallback(BaseCallback):
     def __init__(self, verbose=0):
         super().__init__(verbose)
@@ -21,25 +20,33 @@ class EnvEvalCallback(BaseCallback):
         self._previous_env = None
 
     def _on_rollout_end(self) -> None:
-        board = self.training_env.envs[0].my_board
+        # plots the wins or game overs of the AI
         self.tb_formatter.writer.add_scalar(
-            "is_win/win",
-            len(board[(board >= 0)]),
+            "game/state",
+            2*int(self.locals["infos"][-1]["is_win"]) - int(self.locals["infos"][-1]["game_over"]),
             self.num_timesteps
         )
+        self.logger.record("game/is_win", self.locals["infos"][-1]["is_win"])
+        self.logger.record("game/game_over", self.locals["infos"][-1]["game_over"])
+
+
     def _on_step(self) -> bool:
+        #plots what field the AI clicked on each action
         self.tb_formatter.writer.add_scalar(
-            "actions/action",
+            "games/action",
             self.locals["actions"][-1],
             self.num_timesteps
         )
 
+        #plots the total amount of revealed fields for any given action
         board = self.training_env.envs[0].my_board
         self.tb_formatter.writer.add_scalar(
             "reveals/total",
             len(board[(board >= 0)]),
             self.num_timesteps
         )
+
+        #plots the amount of reveals a single action did compared to the prvious board state
         if self._previous_env is not None:
             self.tb_formatter.writer.add_scalar(
                 "reveals/delta",
@@ -68,8 +75,6 @@ def train_agent(env, num_steps):
         learning_rate=1e-3,
         learning_starts=128,
         target_update_interval=100,
-        exploration_initial_eps=1.0,
-        exploration_final_eps=0.05
     )
     model.learn(total_timesteps=num_steps, callback=EnvEvalCallback())
     # model = A2C('MlpPolicy', env, verbose=1)
